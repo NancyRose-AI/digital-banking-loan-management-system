@@ -42,28 +42,42 @@ The project follows a standard Client-Server architecture with a monolithic back
 
 ```text
 Digital_Banking/
-├── backend/                       # Spring Boot Application
-│   ├── src/main/java/.../digital/ # Core Java Packages
-│   │   ├── config/                # App Configurations
-│   │   ├── controller/            # REST API Controllers
-│   │   ├── dto/                   # Data Transfer Objects
-│   │   ├── entity/                # JPA Entities
-│   │   ├── exception/             # Global Exception Handlers
-│   │   ├── repository/            # Spring Data Repositories
-│   │   ├── security/              # JWT Filters & Services
-│   │   └── service/               # Business Logic & Implementations
-│   ├── src/main/resources/        # application.yml, data.sql
-│   └── pom.xml                    # Maven Dependencies
-└── frontend/                      # React SPA
-    ├── src/
-    │   ├── components/            # Reusable UI Components
-    │   ├── context/               # Global State (AuthContext)
-    │   ├── layouts/               # Page Layout Wrappers
-    │   ├── pages/                 # Route Components
-    │   ├── services/              # API Integration Logic
-    │   └── utils/                 # Helper Functions (currency formatting, etc.)
-    ├── package.json               # NPM Dependencies
-    └── vite.config.js             # Vite Configuration
+├── backend/                              # Spring Boot Application
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/banking/digital/
+│   │   │   │   ├── config/               # App Configurations
+│   │   │   │   ├── controller/           # REST API Controllers
+│   │   │   │   ├── dto/                  # Data Transfer Objects
+│   │   │   │   ├── entity/               # JPA Entities
+│   │   │   │   ├── exception/            # Global Exception Handlers
+│   │   │   │   ├── repository/           # Spring Data Repositories
+│   │   │   │   ├── security/             # JWT Filters & Services
+│   │   │   │   └── service/              # Business Logic & Implementations
+│   │   │   └── resources/
+│   │   │       ├── application.yml       # Spring config (DB, JWT, Razorpay)
+│   │   │       └── data.sql              # Seed data
+│   │   └── test/                         # Unit & Integration tests
+│   ├── maven/                            # Bundled Maven distribution
+│   ├── mvnw / mvnw.cmd                   # Maven Wrapper scripts
+│   └── pom.xml                           # Maven dependencies
+├── frontend/                             # React SPA
+│   ├── src/
+│   │   ├── components/                   # Reusable UI Components
+│   │   ├── context/                      # Global State (AuthContext)
+│   │   ├── layouts/                      # Page Layout Wrappers
+│   │   ├── pages/                        # Route Components
+│   │   ├── services/                     # Axios API client
+│   │   └── utils/                        # Helper functions (currency, etc.)
+│   ├── ssl/                              # mkcert local dev certificates
+│   ├── public/                           # Static assets
+│   ├── index.html                        # App entry point
+│   ├── package.json                      # NPM dependencies
+│   └── vite.config.js                    # Vite / proxy configuration
+├── docker-compose.yml                    # PostgreSQL + Redis containers
+├── start-dev.bat                         # Windows launcher (CMD)
+├── start-dev.ps1                         # Windows launcher (PowerShell)
+└── .gitignore
 ```
 
 ## 🚀 Setup & Installation
@@ -71,26 +85,41 @@ Digital_Banking/
 ### Prerequisites
 - Node.js (v18+)
 - Java JDK 21
-- Maven (or use provided wrapper)
+- Maven (or use the bundled wrapper in `backend/maven/`)
 - Tesseract OCR (installed locally for Tess4j to work)
 
-### Backend Setup
-1. Navigate to the backend directory:
+### ⚡ Quick Start (Recommended)
+
+Use the bundled launcher scripts from the project root to start **both servers** with a single command:
+
+| Shell | Command |
+|-------|---------|
+| **PowerShell** | Right-click `start-dev.ps1` → *Run with PowerShell* |
+| **CMD** | Double-click `start-dev.bat` |
+
+This opens two separate console windows — one titled **DigiBank-Backend** and one **DigiBank-Frontend**.
+
+---
+
+### Manual Setup
+
+#### Backend
+1. Navigate to the `backend/` directory:
    ```bash
    cd backend
    ```
-2. The project includes a bundled Maven distribution. Use it to build and run the application:
+2. Build and run using the bundled Maven Wrapper:
    ```bash
    # Build the project
    .\maven\apache-maven-3.9.6\bin\mvn.cmd clean install
-   
+
    # Run the application
-   .\maven\apache-maven-3.9.6\bin\mvn.cmd spring-boot:run
+   .\mvnw.cmd spring-boot:run
    ```
    *The backend will start on `http://localhost:8080`.*
 
-### Frontend Setup
-1. Navigate to the frontend directory:
+#### Frontend
+1. Navigate to the `frontend/` directory:
    ```bash
    cd frontend
    ```
@@ -102,7 +131,8 @@ Digital_Banking/
    ```bash
    npm run dev
    ```
-   *The frontend will be available at `http://localhost:3000` or the port specified by Vite.*
+   *The frontend will be available at `https://localhost:3000`.*
+
 
 ## ⚙️ Configuration Details
 

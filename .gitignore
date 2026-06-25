@@ -61,9 +61,8 @@ spring-devtools.properties
 # ──────────────────────────────────────────────────────────
 #  REACT / VITE / NODE (Frontend)
 # ──────────────────────────────────────────────────────────
-# Dependencies
+# Dependencies — scoped to frontend/ (no root-level package.json)
 frontend/node_modules/
-node_modules/
 
 # Vite production build output
 frontend/dist/
