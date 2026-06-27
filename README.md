@@ -1,7 +1,5 @@
 # DigiBank - Enterprise Digital Banking & Loan Management System
 
-![Project Banner](https://via.placeholder.com/1200x300?text=DigiBank+Enterprise+Portal)
-
 ## 📖 Project Overview
 
 DigiBank is a comprehensive, full-stack digital banking and loan management platform designed to provide seamless financial services to customers while offering robust administrative controls. The system supports core banking operations, secure KYC verification using OCR, dynamic loan processing, real-time dashboard analytics, and intelligent fraud detection.
@@ -173,11 +171,11 @@ The backend provides a comprehensive REST API mapped under `/api/v1/`:
 
 | Customer Dashboard | Loan Management |
 | :---: | :---: |
-| ![Customer Dashboard](https://via.placeholder.com/400x250?text=Customer+Dashboard) | ![Loan Dashboard](https://via.placeholder.com/400x250?text=Loan+Management) |
+| *(Screenshot: Customer Dashboard)* | *(Screenshot: Loan Management)* |
 
 | KYC Upload & OCR | Admin Analytics |
 | :---: | :---: |
-| ![KYC Upload](https://via.placeholder.com/400x250?text=KYC+OCR+Upload) | ![Admin Analytics](https://via.placeholder.com/400x250?text=Admin+Analytics) |
+| *(Screenshot: KYC OCR Upload)* | *(Screenshot: Admin Analytics)* |
 
 ## 🚢 Deployment Instructions
 

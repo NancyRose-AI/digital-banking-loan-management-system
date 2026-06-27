@@ -32,7 +32,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public FinancialReportDTO getReport(Long userId, String period) {
 
-        // --- Determine date range ---
+
         LocalDateTime from;
         LocalDateTime to = LocalDateTime.now();
 
@@ -43,17 +43,17 @@ public class ReportServiceImpl implements ReportService {
             case "THIS_MONTH":
                 from = LocalDate.now().withDayOfMonth(1).atStartOfDay();
                 break;
-            default: // ALL_TIME
+            default: 
                 from = LocalDateTime.of(2000, 1, 1, 0, 0);
                 break;
         }
 
-        // --- Fetch transactions for the period ---
+
         List<Transaction> txns = "ALL_TIME".equalsIgnoreCase(period)
                 ? transactionRepository.findAllByUserId(userId)
                 : transactionRepository.findByUserIdAndDateRange(userId, from, to);
 
-        // --- Aggregate core metrics ---
+
         BigDecimal totalDeposits = BigDecimal.ZERO;
         BigDecimal totalWithdrawals = BigDecimal.ZERO;
         BigDecimal totalTransfers = BigDecimal.ZERO;
@@ -85,30 +85,30 @@ public class ReportServiceImpl implements ReportService {
             }
         }
 
-        // --- Loan totals ---
+
         List<Loan> loans = loanRepository.findByUserId(userId);
         BigDecimal totalLoanAmount = loans.stream()
                 .map(Loan::getPrincipalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // --- Current balance (always live, regardless of period) ---
+
         BigDecimal currentBalance = accountRepository.findByUserId(userId).stream()
                 .map(a -> a.getBalance() == null ? BigDecimal.ZERO : a.getBalance())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // --- Credit score ---
+
         var creditScoreResult = creditScoreService.calculateAndSaveCreditScore(userId);
         int creditScore = creditScoreResult.getCreditScore().getScore();
         String creditRating = creditScoreResult.getRatingCategory();
 
-        // --- Monthly summary (last 6 months) ---
+
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM yyyy");
         List<String> monthlyLabels = new ArrayList<>();
         List<BigDecimal> monthlyDeposits = new ArrayList<>();
         List<BigDecimal> monthlyWithdrawals = new ArrayList<>();
         List<BigDecimal> monthlyTransfers = new ArrayList<>();
 
-        // Build last 6 calendar months
+        
         for (int i = 5; i >= 0; i--) {
             LocalDate month = LocalDate.now().minusMonths(i);
             String label = month.format(fmt);
@@ -118,7 +118,7 @@ public class ReportServiceImpl implements ReportService {
             LocalDateTime mStart = LocalDate.now().minusMonths(i).withDayOfMonth(1).atStartOfDay();
             LocalDateTime mEnd = mStart.plusMonths(1).minusSeconds(1);
 
-            // Use all transactions (not period-filtered) for monthly chart to give meaningful view
+           
             List<Transaction> allTxns = transactionRepository.findAllByUserId(userId);
 
             BigDecimal dep = allTxns.stream()
@@ -144,7 +144,7 @@ public class ReportServiceImpl implements ReportService {
             monthlyTransfers.add(trf);
         }
 
-        // --- Convert transactions to DTO for table ---
+
         List<TransactionDTO> txnDTOs = txns.stream().map(t -> TransactionDTO.builder()
                 .id(t.getId())
                 .transactionReference(t.getTransactionReference())
@@ -180,6 +180,3 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 }
-
-
-

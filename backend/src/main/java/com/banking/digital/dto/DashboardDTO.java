@@ -24,19 +24,20 @@ public class DashboardDTO {
     private String creditScoreRating;
     private List<String> creditScoreFactors;
     
-    // For Asset Distribution Chart
+    
     private BigDecimal activeLoanAmount;
     private BigDecimal totalPendingEmiAmount;
     private BigDecimal availableFunds;
     
-    // Next pending EMI details — fetched live from emi_schedule table
+    
     private BigDecimal upcomingEmiAmount;
     private LocalDate upcomingEmiDueDate;
     private Long upcomingEmiLoanId;
     private Integer upcomingEmiInstallmentNumber;
+    private int upcomingEmiCount;
     private String kycStatus;
     
-    // For Activity Bar Chart (Today vs Yesterday)
+    
     private List<String> activityLabels;
     private List<Integer> activityTodayData;
     private List<Integer> activityYesterdayData;

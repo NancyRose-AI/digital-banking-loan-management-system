@@ -14,9 +14,6 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    /**
-     * GET /api/v1/reports/user/{userId}?period=TODAY|THIS_MONTH|ALL_TIME
-     */
     @GetMapping("/user/{userId}")
     @PreAuthorize("hasAnyRole('CUSTOMER', 'ADMIN')")
     public ResponseEntity<ApiResponse<FinancialReportDTO>> getReport(
@@ -26,5 +23,3 @@ public class ReportController {
         return ResponseEntity.ok(ApiResponse.success("Report generated successfully", report));
     }
 }
-
-

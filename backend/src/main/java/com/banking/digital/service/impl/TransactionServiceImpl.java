@@ -66,7 +66,7 @@ public class TransactionServiceImpl implements TransactionService {
                     Map.class
             );
 
-            // Razorpay returns 200 OK (not 201 Created) for order creation
+            
             if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
                 Map<String, Object> orderDetails = response.getBody();
                 Map<String, Object> result = new HashMap<>();
@@ -79,7 +79,7 @@ public class TransactionServiceImpl implements TransactionService {
                 throw new RuntimeException("Failed to create Razorpay order: empty response body");
             }
         } catch (org.springframework.web.client.HttpClientErrorException e) {
-            // 4xx from Razorpay — log the response body for debugging
+            
             throw new RuntimeException("Razorpay rejected the order request: " + e.getResponseBodyAsString(), e);
         } catch (Exception e) {
             throw new RuntimeException("Error communicating with Razorpay: " + e.getMessage(), e);
@@ -134,7 +134,7 @@ public class TransactionServiceImpl implements TransactionService {
 
         transactionRepository.save(transaction);
 
-        // Fraud check: unusual large deposit
+        
         if (account.getUser() != null) {
             fraudDetectionService.checkDeposit(account.getUser().getId(), request.getAmount());
         }
@@ -167,7 +167,7 @@ public class TransactionServiceImpl implements TransactionService {
                 
         transactionRepository.save(transaction);
 
-        // Fraud checks: large transfer + rapid transactions
+        
         Long sourceUserId = sourceAccount.getUser() != null ? sourceAccount.getUser().getId() : null;
         if (sourceUserId != null) {
             fraudDetectionService.checkTransfer(sourceUserId, request.getAmount());
@@ -192,7 +192,3 @@ public class TransactionServiceImpl implements TransactionService {
         ).collect(java.util.stream.Collectors.toList());
     }
 }
-
-
-
-

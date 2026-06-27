@@ -69,31 +69,51 @@ public class DashboardServiceImpl implements DashboardService {
                 .map(Loan::getPrincipalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Sum of EMI amounts for all active loans' next installments
+        
         BigDecimal loanEmiBalance = BigDecimal.ZERO;
 
-        // Fetch next pending EMI for this user (earliest due date across all active loans)
+        
         List<EmiSchedule> pendingEmis = emiScheduleRepository.findPendingEmisByUserId(userId);
         BigDecimal upcomingEmiAmount = BigDecimal.ZERO;
         java.time.LocalDate upcomingEmiDueDate = null;
         Long upcomingEmiLoanId = null;
         Integer upcomingEmiInstallmentNumber = null;
 
+        int upcomingEmiCount = 0;
+
         if (!pendingEmis.isEmpty()) {
-            EmiSchedule nextEmi = pendingEmis.get(0);
-            upcomingEmiAmount = nextEmi.getEmiAmount();
-            upcomingEmiDueDate = nextEmi.getDueDate();
-            upcomingEmiLoanId = nextEmi.getLoan().getId();
-            upcomingEmiInstallmentNumber = nextEmi.getInstallmentNumber();
-            // Also sum all active loans next EMI into loanEmiBalance
-            loanEmiBalance = pendingEmis.stream()
-                    // Get first pending per loan to avoid double-counting
-                    .collect(java.util.stream.Collectors.toMap(
-                            e -> e.getLoan().getId(),
-                            e -> e.getEmiAmount(),
-                            (a, b) -> a))
-                    .values().stream()
+            java.util.Map<Long, EmiSchedule> firstEmiPerLoan = pendingEmis.stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        e -> e.getLoan().getId(),
+                        e -> e,
+                        (a, b) -> a 
+                ));
+
+            
+            loanEmiBalance = firstEmiPerLoan.values().stream()
+                .map(EmiSchedule::getEmiAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            
+            upcomingEmiDueDate = firstEmiPerLoan.values().stream()
+                .map(EmiSchedule::getDueDate)
+                .min(java.time.LocalDate::compareTo)
+                .orElse(null);
+
+            if (upcomingEmiDueDate != null) {
+                java.time.LocalDate finalEarliestDate = upcomingEmiDueDate;
+                List<EmiSchedule> emisDueOnEarliestDate = firstEmiPerLoan.values().stream()
+                    .filter(e -> e.getDueDate().equals(finalEarliestDate))
+                    .collect(Collectors.toList());
+
+                upcomingEmiCount = emisDueOnEarliestDate.size();
+                upcomingEmiAmount = emisDueOnEarliestDate.stream()
+                    .map(EmiSchedule::getEmiAmount)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                upcomingEmiLoanId = emisDueOnEarliestDate.get(0).getLoan().getId();
+                upcomingEmiInstallmentNumber = emisDueOnEarliestDate.get(0).getInstallmentNumber();
+            }
         }
 
         BigDecimal totalPendingEmiAmount = pendingEmis.stream()
@@ -102,10 +122,10 @@ public class DashboardServiceImpl implements DashboardService {
         
         BigDecimal availableFunds = totalBalance;
 
-        // Find recent transactions across all accounts
+        
         List<Transaction> transactions = transactionRepository.findRecentTransactionsByUserId(userId, org.springframework.data.domain.PageRequest.of(0, 10));
         
-        // Calculate Today vs Yesterday Activity
+        
         List<Transaction> allTransactions = transactionRepository.findAllByUserId(userId);
         
         java.time.LocalDate today = java.time.LocalDate.now();
@@ -161,7 +181,7 @@ public class DashboardServiceImpl implements DashboardService {
             kycStatus = isVerified ? "VERIFIED" : "PENDING";
         }
 
-        // Dynamically recalculate credit score on dashboard load
+        
         CreditScoreResultDTO creditScoreResult = creditScoreService.calculateAndSaveCreditScore(userId);
 
         return DashboardDTO.builder()
@@ -179,6 +199,7 @@ public class DashboardServiceImpl implements DashboardService {
                 .upcomingEmiDueDate(upcomingEmiDueDate)
                 .upcomingEmiLoanId(upcomingEmiLoanId)
                 .upcomingEmiInstallmentNumber(upcomingEmiInstallmentNumber)
+                .upcomingEmiCount(upcomingEmiCount)
                 .kycStatus(kycStatus)
                 .activityLabels(activityLabels)
                 .activityTodayData(activityTodayData)
@@ -194,13 +215,12 @@ public class DashboardServiceImpl implements DashboardService {
         long totalCustomers = userRepository.count();
         long totalLoans = loanRepository.count();
         
-        // Simplified total revenue calculation (just sum of all transaction amounts for demo)
         BigDecimal totalRevenue = transactionRepository.findAll().stream()
                 .map(Transaction::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         long fraudAlerts = fraudLogRepository.countByResolved(false);
-        long newRegistrations = totalCustomers; // For demo, all are new
+        long newRegistrations = totalCustomers;
 
         List<TransactionDTO> recentSystemTransactions = transactionRepository.findAll(org.springframework.data.domain.PageRequest.of(0, 5))
                 .stream().map(t -> 
@@ -230,16 +250,14 @@ public class DashboardServiceImpl implements DashboardService {
                 .filter(loan -> LoanStatus.PENDING.equals(loan.getStatus()))
                 .count();
 
-        long pendingKyc = kycDocumentRepository.count(); // Assuming all are pending for demo if exist
+        long pendingKyc = kycDocumentRepository.count();
         long dailyOps = transactionRepository.count();
 
         return EmployeeDashboardDTO.builder()
                 .pendingLoanApprovals(pendingLoans)
                 .pendingKycVerifications(pendingKyc)
                 .dailyOperationsCount(dailyOps)
-                .customerRequestsCount(5) // Static demo value
+                .customerRequestsCount(5)
                 .build();
     }
 }
-
-

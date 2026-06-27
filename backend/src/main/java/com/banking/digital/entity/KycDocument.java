@@ -23,7 +23,7 @@ public class KycDocument {
     private User user;
 
     @Column(nullable = false)
-    private String documentType; // ID_PROOF, ADDRESS_PROOF, INCOME_PROOF
+    private String documentType; 
 
     @Column(nullable = false)
     private String documentNumber;
@@ -32,7 +32,7 @@ public class KycDocument {
     private String fileUrl;
 
     @Column(nullable = false)
-    private String status; // PENDING, VERIFIED, REJECTED
+    private String status; 
 
     @Column(name = "uploaded_at")
     private LocalDateTime uploadedAt;

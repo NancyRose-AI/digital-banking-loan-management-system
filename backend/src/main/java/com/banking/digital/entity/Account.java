@@ -30,10 +30,10 @@ public class Account {
     private BigDecimal balance;
 
     @Column(nullable = false)
-    private String accountType; // SAVINGS, CHECKING
+    private String accountType; 
 
     @Column(nullable = false)
-    private String status; // ACTIVE, INACTIVE, FROZEN
+    private String status; 
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

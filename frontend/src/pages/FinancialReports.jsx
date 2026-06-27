@@ -36,7 +36,7 @@ const creditColor = (score) => {
 
 const PERIOD_LABELS = { TODAY: 'Today', THIS_MONTH: 'This Month', ALL_TIME: 'All Time' };
 
-// ── Metric card ──────────────────────────────────────────────────────────────
+
 const MetricCard = ({ icon, label, value, accent, sub }) => (
   <Paper
     elevation={0}
@@ -92,7 +92,7 @@ const MetricCard = ({ icon, label, value, accent, sub }) => (
   </Paper>
 );
 
-// ── Main component ───────────────────────────────────────────────────────────
+
 const FinancialReports = () => {
   const { user } = useAuth();
   const [period, setPeriod]   = useState('ALL_TIME');
@@ -121,7 +121,7 @@ const FinancialReports = () => {
 
   useEffect(() => { fetchReport(); }, [fetchReport]);
 
-  // ── PDF Export ──────────────────────────────────────────────────────────────
+
   const exportPDF = async () => {
     const { default: jsPDF } = await import('jspdf');
     const doc = new jsPDF();
@@ -192,7 +192,7 @@ const FinancialReports = () => {
     doc.save(`financial_report_${period.toLowerCase()}_${Date.now()}.pdf`);
   };
 
-  // ── Excel Export ────────────────────────────────────────────────────────────
+
   const exportExcel = async () => {
     const XLSX = await import('xlsx');
     const wb = XLSX.utils.book_new();
@@ -234,7 +234,7 @@ const FinancialReports = () => {
     XLSX.writeFile(wb, `financial_report_${period.toLowerCase()}_${Date.now()}.xlsx`);
   };
 
-  // ── Chart data ──────────────────────────────────────────────────────────────
+
   const monthlyBarData = report ? {
     labels: report.monthlyLabels || [],
     datasets: [
@@ -326,7 +326,7 @@ const FinancialReports = () => {
 
   return (
     <Box>
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
+
       <Box sx={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
         mb: 3.5, flexWrap: 'wrap', gap: 2,
@@ -398,7 +398,7 @@ const FinancialReports = () => {
         </Paper>
       ) : report ? (
         <>
-          {/* ── Metric Cards ──────────────────────────────────────────────── */}
+
           <Grid container spacing={2.5} sx={{ mb: 3.5 }}>
             <Grid item xs={6} sm={4} md={2}>
               <MetricCard
@@ -455,7 +455,7 @@ const FinancialReports = () => {
             </Grid>
           </Grid>
 
-          {/* ── Credit Score ──────────────────────────────────────────────── */}
+
           <Grid container spacing={2.5} sx={{ mb: 3.5 }}>
             <Grid item xs={12} md={6}>
               <Paper elevation={0} sx={{ p: 3, borderRadius: 4, height: '100%', border: '1px solid #f1f5f9' }}>
@@ -496,7 +496,7 @@ const FinancialReports = () => {
               </Paper>
             </Grid>
 
-            {/* ── Donut chart ────────────────────────────────────────────── */}
+
             <Grid item xs={12} md={6}>
               <Paper elevation={0} sx={{ p: 3, borderRadius: 4, height: 240, border: '1px solid #f1f5f9' }}>
                 <Typography variant="subtitle1" fontWeight="700" color="text.primary" sx={{ mb: 0.5 }}>
@@ -512,7 +512,7 @@ const FinancialReports = () => {
             </Grid>
           </Grid>
 
-          {/* ── Monthly bar chart ──────────────────────────────────────────── */}
+
           <Paper elevation={0} sx={{ p: 3, borderRadius: 4, mb: 3.5, height: 360, border: '1px solid #f1f5f9' }}>
             <Typography variant="subtitle1" fontWeight="700" color="text.primary" sx={{ mb: 0.5 }}>
               Monthly Activity Overview
@@ -525,7 +525,7 @@ const FinancialReports = () => {
             </Box>
           </Paper>
 
-          {/* ── Transaction Ledger ─────────────────────────────────────────── */}
+
           <Paper elevation={0} sx={{ borderRadius: 4, overflow: 'hidden', border: '1px solid #f1f5f9' }}>
             <Box sx={{
               px: 3, py: 2,
@@ -636,5 +636,3 @@ const FinancialReports = () => {
 };
 
 export default FinancialReports;
-
-

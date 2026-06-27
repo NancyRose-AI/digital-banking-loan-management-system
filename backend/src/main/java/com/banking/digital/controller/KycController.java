@@ -59,5 +59,3 @@ public class KycController {
         return ResponseEntity.ok(response);
     }
 }
-
-

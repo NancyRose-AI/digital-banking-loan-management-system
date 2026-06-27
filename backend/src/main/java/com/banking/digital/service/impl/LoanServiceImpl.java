@@ -58,8 +58,6 @@ public class LoanServiceImpl implements LoanService {
     @Value("${razorpay.key-secret}")
     private String keySecret;
 
-    // ---------- Helper: Map entity → DTO ----------
-
     private LoanDTO toDTO(Loan loan) {
         List<EmiScheduleDTO> emiDTOs = emiScheduleRepository.findByLoanId(loan.getId())
                 .stream()
@@ -91,8 +89,6 @@ public class LoanServiceImpl implements LoanService {
                 .build();
     }
 
-    // ---------- Service Methods ----------
-
     @Override
     @Transactional
     public LoanDTO applyForLoan(Long userId, LoanRequest request) {
@@ -115,7 +111,7 @@ public class LoanServiceImpl implements LoanService {
                 .build();
         Loan saved = loanRepository.save(loan);
         
-        // Fraud check: Abnormal Loan Request
+       
         fraudDetectionService.checkLoanApplication(userId, request.getPrincipalAmount());
         
         return toDTO(saved);
@@ -129,7 +125,7 @@ public class LoanServiceImpl implements LoanService {
         if (!LoanStatus.PENDING.equals(loan.getStatus())) {
             throw new RuntimeException("Only PENDING loans can be approved. Current status: " + loan.getStatus());
         }
-        // Credit principal amount to user's primary account
+        
         String accountNumber = accountService.getUserAccounts(loan.getUser().getId())
                 .stream().findFirst()
                 .orElseThrow(() -> new RuntimeException("User has no bank account. Cannot disburse loan."))
@@ -151,7 +147,7 @@ public class LoanServiceImpl implements LoanService {
         Loan saved = loanRepository.save(loan);
         generateEmiSchedule(saved);
         
-        // Recalculate credit score after loan approval
+        
         creditScoreService.calculateAndSaveCreditScore(saved.getUser().getId());
         
         return toDTO(saved);
@@ -280,7 +276,7 @@ public class LoanServiceImpl implements LoanService {
             loanRepository.save(loan);
         }
 
-        // Recalculate credit score after EMI payment
+        
         creditScoreService.calculateAndSaveCreditScore(loan.getUser().getId());
     }
 
@@ -300,17 +296,13 @@ public class LoanServiceImpl implements LoanService {
                 .collect(Collectors.toList());
     }
 
-    // ---------- EMI Generator (Standard EMI formula) ----------
-
     private void generateEmiSchedule(Loan loan) {
         int n = loan.getTenureMonths();
         BigDecimal principal = loan.getPrincipalAmount();
         BigDecimal annualRate = loan.getInterestRate();
 
-        // Monthly rate: r = annual% / 12 / 100
         BigDecimal monthlyRate = annualRate.divide(BigDecimal.valueOf(1200), 10, RoundingMode.HALF_EVEN);
 
-        // EMI = P * r * (1+r)^n / ((1+r)^n - 1)
         BigDecimal onePlusR = BigDecimal.ONE.add(monthlyRate);
         BigDecimal onePlusRPowN = onePlusR.pow(n, new MathContext(15, RoundingMode.HALF_EVEN));
         BigDecimal emi = principal.multiply(monthlyRate).multiply(onePlusRPowN)
@@ -340,5 +332,3 @@ public class LoanServiceImpl implements LoanService {
         }
     }
 }
-
-

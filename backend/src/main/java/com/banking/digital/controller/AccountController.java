@@ -34,5 +34,3 @@ public class AccountController {
         return ResponseEntity.ok(ApiResponse.success("Accounts found", accountService.getUserAccounts(userId)));
     }
 }
-
-

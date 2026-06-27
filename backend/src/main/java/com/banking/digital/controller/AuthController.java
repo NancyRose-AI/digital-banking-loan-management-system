@@ -48,5 +48,3 @@ public class AuthController {
                 Map.of("username", username, "userId", userId)));
     }
 }
-
-

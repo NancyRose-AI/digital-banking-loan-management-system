@@ -35,7 +35,3 @@ public class DashboardController {
         return ResponseEntity.ok(ApiResponse.success("Employee dashboard retrieved", dashboardService.getEmployeeDashboard()));
     }
 }
-
-
-
-

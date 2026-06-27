@@ -31,7 +31,7 @@ public class KycServiceImpl implements KycService {
 
     private static final String UPLOAD_DIR = "uploads/kyc/";
 
-    // Supported MIME types for OCR
+    
     private static final java.util.Set<String> SUPPORTED_TYPES = java.util.Set.of(
             "image/jpeg", "image/jpg", "image/png", "image/gif",
             "image/bmp", "image/tiff", "image/webp"
@@ -42,7 +42,7 @@ public class KycServiceImpl implements KycService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Validate file type before processing
+       
         String contentType = file.getContentType();
         String originalName = file.getOriginalFilename() != null ? file.getOriginalFilename().toLowerCase() : "";
         boolean isSupportedType = (contentType != null && SUPPORTED_TYPES.contains(contentType.toLowerCase()))
@@ -60,7 +60,7 @@ public class KycServiceImpl implements KycService {
         }
 
         try {
-            // Save uploaded file to disk
+            
             Path uploadPath = Paths.get(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -70,8 +70,7 @@ public class KycServiceImpl implements KycService {
             Path filePath = uploadPath.resolve(filename);
             Files.copy(file.getInputStream(), filePath);
 
-            // Convert the saved image to a standard PNG for reliable OCR
-            // ImageIO supports JPEG, PNG, GIF, BMP, WBMP natively
+            
             File ocrTargetFile = filePath.toFile();
             File tempPngFile = null;
             try {
@@ -81,8 +80,7 @@ public class KycServiceImpl implements KycService {
                     ImageIO.write(bufferedImage, "PNG", tempPngFile);
                     ocrTargetFile = tempPngFile;
                 } else {
-                    // ImageIO returned null — format not decodable (e.g. AVIF)
-                    // This should not reach here given the validation above, but handle gracefully
+                    
                     throw new RuntimeException(
                         "Could not decode the uploaded image. Please upload a JPG, PNG, TIFF, or BMP file."
                     );
@@ -91,7 +89,7 @@ public class KycServiceImpl implements KycService {
                 throw new RuntimeException("Failed to read the uploaded image: " + imgEx.getMessage(), imgEx);
             }
 
-            // Run Tesseract OCR on the converted PNG
+            
             String extractedText = "";
             try {
                 Tesseract tesseract = new Tesseract();
@@ -100,19 +98,19 @@ public class KycServiceImpl implements KycService {
                 System.out.println("[KYC OCR] Extracted text for " + documentType + ": " + extractedText);
             } catch (TesseractException e) {
                 System.err.println("[KYC OCR] Tesseract failed for file: " + filename + " — " + e.getMessage());
-                // OCR failed — status stays PENDING
+                
             } finally {
-                // Clean up temp file
+                
                 if (tempPngFile != null && tempPngFile.exists()) {
                     tempPngFile.delete();
                 }
             }
 
-            // Validate document based on type using extracted text
+            
             String status = "PENDING";
             String documentNumber = "N/A";
             if (documentType != null && (documentType.equalsIgnoreCase("PAN") || documentType.equalsIgnoreCase("AADHAAR"))) {
-                // Remove all whitespace (including spaces/newlines between digit groups) for matching
+                
                 String cleaned = extractedText.replaceAll("[\\s\\-]", "").toUpperCase();
                 System.out.println("[KYC OCR] Cleaned text: " + cleaned);
 
@@ -126,8 +124,8 @@ public class KycServiceImpl implements KycService {
                     } else {
                         System.out.println("[KYC OCR] PAN pattern not found in cleaned text.");
                     }
-                } else { // Aadhaar — also try on the RAW text with spaces since Aadhaar is often printed as "1234 5678 9012"
-                    // Try matching on cleaned (no spaces) first
+                } else { 
+                    
                     Pattern aadhaarPattern = Pattern.compile("\\d{12}");
                     Matcher m = aadhaarPattern.matcher(cleaned);
                     if (m.find()) {
@@ -135,7 +133,7 @@ public class KycServiceImpl implements KycService {
                         status = "VERIFIED";
                         System.out.println("[KYC OCR] Aadhaar matched (cleaned): " + documentNumber);
                     } else {
-                        // Also try matching groups of 4 digits separated by spaces: "1234 5678 9012"
+                        
                         Pattern aadhaarSpacedPattern = Pattern.compile("\\d{4}\\s+\\d{4}\\s+\\d{4}");
                         Matcher m2 = aadhaarSpacedPattern.matcher(extractedText);
                         if (m2.find()) {
@@ -189,5 +187,3 @@ public class KycServiceImpl implements KycService {
         kycDocumentRepository.save(doc);
     }
 }
-
-

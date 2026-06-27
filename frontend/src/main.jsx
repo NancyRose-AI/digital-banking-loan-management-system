@@ -6,50 +6,49 @@ import { ThemeProvider, createTheme } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import { AuthProvider } from './context/AuthContext.jsx'
 
-// Pastel Premium Fintech Theme
 const theme = createTheme({
   palette: {
     mode: 'light',
     background: {
-      default: '#fcfcfd', // Ultra clean white/gray
+      default: '#fcfcfd',
       paper: '#ffffff',
     },
     primary: {
-      main: '#2563eb', // Clean trustworthy blue
+      main: '#2563eb',
       light: '#60a5fa',
       dark: '#1d4ed8',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#8b5cf6', // Lavender/Purple
+      main: '#8b5cf6',
       light: '#a78bfa',
       dark: '#7c3aed',
       contrastText: '#ffffff',
     },
     success: {
-      main: '#10b981', // Mint green
+      main: '#10b981',
       light: '#34d399',
       dark: '#059669',
       contrastText: '#ffffff',
     },
     info: {
-      main: '#38bdf8', // Light blue
+      main: '#38bdf8',
       light: '#7dd3fc',
       dark: '#0284c7',
     },
     warning: {
-      main: '#f59e0b', // Peach/Orange
+      main: '#f59e0b',
       light: '#fbbf24',
       dark: '#d97706',
     },
     error: {
-      main: '#f43f5e', // Rose/Pink
+      main: '#f43f5e',
       light: '#fb7185',
       dark: '#e11d48',
     },
     text: {
-      primary: '#1e293b', // Deep slate for high readability
-      secondary: '#64748b', // Muted slate
+      primary: '#1e293b',
+      secondary: '#64748b',
     },
     divider: '#f1f5f9',
   },

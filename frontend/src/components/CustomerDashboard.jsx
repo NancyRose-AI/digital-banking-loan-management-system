@@ -31,13 +31,13 @@ ChartJS.register(
 );
 
 const RISK_CONFIG = {
-  HIGH:   { color: 'error',   hex: '#f43f5e', label: 'HIGH RISK',   icon: <ErrorOutline fontSize="small" /> },
+  HIGH: { color: 'error', hex: '#f43f5e', label: 'HIGH RISK', icon: <ErrorOutline fontSize="small" /> },
   MEDIUM: { color: 'warning', hex: '#f59e0b', label: 'MEDIUM RISK', icon: <Warning fontSize="small" /> },
-  LOW:    { color: 'info',    hex: '#38bdf8', label: 'LOW RISK',    icon: <Warning fontSize="small" /> },
-  SAFE:   { color: 'success', hex: '#10b981', label: 'SECURE',      icon: <CheckCircle fontSize="small" /> },
+  LOW: { color: 'info', hex: '#38bdf8', label: 'LOW RISK', icon: <Warning fontSize="small" /> },
+  SAFE: { color: 'success', hex: '#10b981', label: 'SECURE', icon: <CheckCircle fontSize="small" /> },
 };
 
-// ── Unified Stat Card ─────────────────────────────────────────────────────
+
 const StatCard = ({ icon, label, value, iconBg, iconColor, sub, actionLabel, onAction }) => (
   <Paper
     elevation={0}
@@ -61,7 +61,7 @@ const StatCard = ({ icon, label, value, iconBg, iconColor, sub, actionLabel, onA
   >
     {/* Icon row */}
     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 0.5 }}>
-      <Box sx={{ 
+      <Box sx={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         width: 38, height: 38, borderRadius: 2,
         bgcolor: iconBg, color: iconColor, flexShrink: 0,
@@ -135,13 +135,13 @@ const StatCard = ({ icon, label, value, iconBg, iconColor, sub, actionLabel, onA
 );
 
 const CustomerDashboard = () => {
-  const [dashboardData, setDashboardData]       = useState(null);
-  const [fraudAlerts, setFraudAlerts]           = useState([]);
-  const [fraudLoading, setFraudLoading]         = useState(true);
-  const [fraudRefreshing, setFraudRefreshing]   = useState(false);
+  const [dashboardData, setDashboardData] = useState(null);
+  const [fraudAlerts, setFraudAlerts] = useState([]);
+  const [fraudLoading, setFraudLoading] = useState(true);
+  const [fraudRefreshing, setFraudRefreshing] = useState(false);
   const [fraudLastUpdated, setFraudLastUpdated] = useState(null);
-  const [kycRefresh, setKycRefresh]             = useState(0);
-  const [showKycForm, setShowKycForm]           = useState(false);
+  const [kycRefresh, setKycRefresh] = useState(0);
+  const [showKycForm, setShowKycForm] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const fraudPollRef = useRef(null);
@@ -185,9 +185,9 @@ const CustomerDashboard = () => {
   const getOverallRisk = () => {
     if (!fraudAlerts || fraudAlerts.length === 0) return RISK_CONFIG.SAFE;
     const levels = fraudAlerts.map(a => a.riskLevel);
-    if (levels.includes('HIGH'))   return RISK_CONFIG.HIGH;
+    if (levels.includes('HIGH')) return RISK_CONFIG.HIGH;
     if (levels.includes('MEDIUM')) return RISK_CONFIG.MEDIUM;
-    if (levels.includes('LOW'))    return RISK_CONFIG.LOW;
+    if (levels.includes('LOW')) return RISK_CONFIG.LOW;
     return RISK_CONFIG.SAFE;
   };
 
@@ -202,21 +202,21 @@ const CustomerDashboard = () => {
     );
   }
 
-  // ── Elegant Charts Configuration ──────────────────────────────────────────
+
   const activityBarData = {
     labels: dashboardData.activityLabels || ['Deposits', 'Transfers', 'Loans', 'EMI'],
     datasets: [
       {
         label: 'Today',
         data: dashboardData.activityTodayData || [0, 0, 0, 0],
-        backgroundColor: '#60a5fa', // Soft blue
+        backgroundColor: '#60a5fa',
         borderRadius: 8,
         barThickness: 20,
       },
       {
         label: 'Yesterday',
         data: dashboardData.activityYesterdayData || [0, 0, 0, 0],
-        backgroundColor: '#e2e8f0', // Soft gray
+        backgroundColor: '#e2e8f0',
         borderRadius: 8,
         barThickness: 20,
       },
@@ -237,7 +237,7 @@ const CustomerDashboard = () => {
     },
     scales: {
       x: { grid: { display: false }, border: { display: false }, ticks: { font: { family: 'Inter', weight: '600', size: 11 }, color: '#94a3b8' } },
-      y: { border: { display: false }, ticks: { font: { family: 'Inter', weight: '600', size: 11 }, color: '#94a3b8', callback: (val) => val > 1000 ? (val/1000) + 'k' : val }, grid: { color: '#f8fafc', drawBorder: false } },
+      y: { border: { display: false }, ticks: { font: { family: 'Inter', weight: '600', size: 11 }, color: '#94a3b8', callback: (val) => val > 1000 ? (val / 1000) + 'k' : val }, grid: { color: '#f8fafc', drawBorder: false } },
     },
   };
 
@@ -271,11 +271,11 @@ const CustomerDashboard = () => {
   };
 
   const creditColor = (score) => {
-    if (score >= 800) return '#10b981'; // Mint
-    if (score >= 740) return '#38bdf8'; // Light Blue
-    if (score >= 670) return '#8b5cf6'; // Lavender
-    if (score >= 580) return '#f59e0b'; // Peach
-    return '#f43f5e'; // Rose
+    if (score >= 800) return '#10b981';
+    if (score >= 740) return '#38bdf8';
+    if (score >= 670) return '#8b5cf6';
+    if (score >= 580) return '#f59e0b';
+    return '#f43f5e';
   };
 
   const creditProgress = (score) => Math.max(0, Math.min(100, ((score - 300) / 600) * 100));
@@ -315,7 +315,7 @@ const CustomerDashboard = () => {
         </Box>
       </Box>
 
-      {/* ── Summary Stat Cards ─────────────────────────────────────────────────── */}
+
       <Grid container spacing={2} sx={{ mb: 4, alignItems: 'stretch' }}>
         {/* Total Balance */}
         <Grid item xs={6} sm={4} md={4} lg={2} sx={{ display: 'flex' }}>
@@ -356,7 +356,7 @@ const CustomerDashboard = () => {
             value={dashboardData.upcomingEmiAmount > 0 ? inrFmt(dashboardData.upcomingEmiAmount) : '₹0'}
             sub={
               dashboardData.upcomingEmiDueDate
-                ? `Due ${new Date(dashboardData.upcomingEmiDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`
+                ? `Due ${new Date(dashboardData.upcomingEmiDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}${dashboardData.upcomingEmiCount > 1 ? ` (${dashboardData.upcomingEmiCount} loans)` : ''}`
                 : 'No upcoming EMI'
             }
             iconBg="#ccfbf1" iconColor="#0f766e"
@@ -384,8 +384,8 @@ const CustomerDashboard = () => {
               dashboardData.kycStatus === 'VERIFIED'
                 ? 'Identity verified'
                 : dashboardData.kycStatus === 'PENDING'
-                ? 'Under review'
-                : 'Action required'
+                  ? 'Under review'
+                  : 'Action required'
             }
             iconBg={dashboardData.kycStatus === 'VERIFIED' ? '#dcfce7' : dashboardData.kycStatus === 'PENDING' ? '#fef9c3' : '#ffedd5'}
             iconColor={dashboardData.kycStatus === 'VERIFIED' ? '#15803d' : dashboardData.kycStatus === 'PENDING' ? '#a16207' : '#c2410c'}
@@ -404,7 +404,7 @@ const CustomerDashboard = () => {
       </Grid>
 
       <Grid container spacing={3} sx={{ mb: 4 }}>
-        {/* ── Credit Score Section ────────────────────────────────────────────── */}
+
         <Grid item xs={12} md={6}>
           <Paper elevation={0} sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid #f1f5f9' }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
@@ -415,7 +415,7 @@ const CustomerDashboard = () => {
                 Credit Insights
               </Typography>
             </Box>
-            
+
             <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 3, alignItems: 'center' }}>
               <Box sx={{ flex: 1, textAlign: 'center', p: 3, bgcolor: '#ffffff', borderRadius: 4, border: '1px solid #f8fafc' }}>
                 <Typography variant="h4" fontWeight="700" sx={{ color: creditColor(dashboardData.creditScore || 300), letterSpacing: '-0.5px', mb: 0.5 }}>
@@ -424,7 +424,7 @@ const CustomerDashboard = () => {
                 <Typography variant="body2" color="text.secondary" fontWeight="500" sx={{ mb: 2 }}>
                   Out of 900
                 </Typography>
-                
+
                 <LinearProgress
                   variant="determinate"
                   value={creditProgress(dashboardData.creditScore || 300)}
@@ -447,13 +447,13 @@ const CustomerDashboard = () => {
                   }}
                 />
               </Box>
-              
+
               <Box sx={{ flex: 1, width: '100%' }}>
                 <Typography variant="caption" fontWeight="700" color="text.secondary" sx={{ textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', mb: 1.5 }}>
                   Key Factors
                 </Typography>
                 <List dense disablePadding>
-                  {(dashboardData.creditScoreFactors || []).slice(0,3).map((factor, i) => {
+                  {(dashboardData.creditScoreFactors || []).slice(0, 3).map((factor, i) => {
                     const isPos = factor.includes('+');
                     return (
                       <ListItem key={i} sx={{ py: 1, px: 0, alignItems: 'flex-start' }}>
@@ -478,7 +478,7 @@ const CustomerDashboard = () => {
           </Paper>
         </Grid>
 
-        {/* ── Fraud Detection Widget ──────────────────────────────────────────── */}
+
         <Grid item xs={12} md={6}>
           <Paper elevation={0} sx={{ p: 3, height: '100%', borderRadius: 4, border: '1px solid #f1f5f9' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -558,7 +558,7 @@ const CustomerDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* ── Beautiful Charts ──────────────────────────────────────────────────── */}
+
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} md={7}>
           <Paper elevation={0} sx={{ p: 3, height: 360, borderRadius: 4, border: '1px solid #f1f5f9' }}>
@@ -592,12 +592,12 @@ const CustomerDashboard = () => {
         </Grid>
       </Grid>
 
-      {/* ── KYC List ─────────────────────────────────────────────────────────── */}
+
       <Box sx={{ mb: 4 }}>
         <KycList refreshTrigger={kycRefresh} />
       </Box>
 
-      {/* ── Transactions + Quick Actions ─────────────────────────────────────── */}
+
       <Grid container spacing={3}>
         <Grid item xs={12} md={8}>
           <Paper elevation={0} sx={{ borderRadius: 4, border: '1px solid #f1f5f9', overflow: 'hidden' }}>
@@ -679,7 +679,7 @@ const CustomerDashboard = () => {
               </Typography>
               {dashboardData.upcomingEmiDueDate && (
                 <Typography variant="caption" sx={{ color: '#64748b', fontWeight: 500, display: 'block', mb: 2 }}>
-                  Due {new Date(dashboardData.upcomingEmiDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  Due {new Date(dashboardData.upcomingEmiDueDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}{dashboardData.upcomingEmiCount > 1 ? ` (${dashboardData.upcomingEmiCount} loans)` : ''}
                 </Typography>
               )}
               <Button
@@ -745,7 +745,3 @@ const CustomerDashboard = () => {
 };
 
 export default CustomerDashboard;
-
-
-
-

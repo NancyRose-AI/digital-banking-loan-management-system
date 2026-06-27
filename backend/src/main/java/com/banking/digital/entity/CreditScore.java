@@ -26,7 +26,7 @@ public class CreditScore {
     private Integer score;
 
     @Column(nullable = false)
-    private String riskCategory; // LOW, MEDIUM, HIGH
+    private String riskCategory; 
 
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated;

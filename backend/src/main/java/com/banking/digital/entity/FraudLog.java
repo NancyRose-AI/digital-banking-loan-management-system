@@ -23,7 +23,7 @@ public class FraudLog {
     private User user;
 
     @Column(nullable = false)
-    private String eventType; // LARGE_TRANSFER, RAPID_TRANSACTIONS, ABNORMAL_LOAN, EXCESSIVE_EMI_FAILURE, SUSPICIOUS_DEPOSIT
+    private String eventType; 
 
     @Column(nullable = false, length = 2000)
     private String description;

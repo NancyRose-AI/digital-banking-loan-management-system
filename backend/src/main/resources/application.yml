@@ -2,12 +2,7 @@ spring:
   application:
     name: digital-banking
 
-  # ---------------------------------------------------------------------------
-  # Database — H2 FILE-BASED (persists across backend restarts)
-  # The DB file lives at:  backend/data/bankdb.mv.db
-  # Change "mem:" to "file:" is the ONLY change needed to survive restarts.
-  # AUTO_SERVER=TRUE allows the H2 Console and the app to share the same file.
-  # ---------------------------------------------------------------------------
+  
   datasource:
     url: jdbc:h2:file:~/.digital-banking/bankdb
     driverClassName: org.h2.Driver
@@ -31,11 +26,7 @@ spring:
       settings:
         web-allow-others: true
 
-  # ---------------------------------------------------------------------------
-  # Redis — disabled for local development (no Redis server required)
-  # RedisConfig.java is already commented out; this exclusion stops Spring Boot
-  # auto-configuration from trying to connect on startup.
-  # ---------------------------------------------------------------------------
+  
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
@@ -48,8 +39,8 @@ server:
 
 jwt:
   secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-  expiration: 86400000 # 1 day in ms
+  expiration: 86400000 
 
 razorpay:
   key-id: rzp_test_T4y5tlWeXW3TPC
-  key-secret: xg79eJsXIanw3dNign9RTAH1
+  key-secret: xg79eJsXIanw3dNign9RTAH1 

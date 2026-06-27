@@ -83,5 +83,3 @@ const KycList = ({ refreshTrigger }) => {
 };
 
 export default KycList;
-
-

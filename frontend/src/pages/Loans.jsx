@@ -429,5 +429,3 @@ function calcEmi(principal, months) {
 }
 
 export default Loans;
-
-

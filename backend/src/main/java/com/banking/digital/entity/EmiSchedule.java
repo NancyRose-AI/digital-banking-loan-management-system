@@ -41,7 +41,7 @@ public class EmiSchedule {
     private LocalDate dueDate;
 
     @Column(nullable = false)
-    private String status; // PENDING, PAID, OVERDUE
+    private String status; 
 }
 
 

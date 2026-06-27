@@ -208,5 +208,3 @@ const KycUpload = ({ onUploadSuccess }) => {
 };
 
 export default KycUpload;
-
-

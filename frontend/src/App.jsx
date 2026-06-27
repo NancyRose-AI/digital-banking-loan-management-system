@@ -5,7 +5,6 @@ import { useAuth } from './context/AuthContext';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 
-// Pages
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -70,5 +69,3 @@ function App() {
 }
 
 export default App;
-
-
