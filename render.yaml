@@ -1,0 +1,24 @@
+services:
+  - type: psql
+    name: digital-banking-db
+    plan: free
+    version: 15
+
+  
+  - type: web
+    name: digital-banking-backend
+    env: docker
+    region: ohio
+    plan: free
+    rootDir: backend
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: DATABASE_URL
+        fromDatabase:
+          name: digital-banking-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://digital-banking-frontend.vercel.app # Note: Update this if the Vercel URL is different.
