@@ -167,16 +167,6 @@ The backend provides a comprehensive REST API mapped under `/api/v1/`:
    - Manually reviews complex KYC submissions or loan applications.
    - Generates system-wide financial reports.
 
-## 🖼️ Screenshots
-
-| Customer Dashboard | Loan Management |
-| :---: | :---: |
-| *(Screenshot: Customer Dashboard)* | *(Screenshot: Loan Management)* |
-
-| KYC Upload & OCR | Admin Analytics |
-| :---: | :---: |
-| *(Screenshot: KYC OCR Upload)* | *(Screenshot: Admin Analytics)* |
-
 ## 🚢 Deployment Instructions
 
 1. **Backend**: Package the Spring Boot application into a `.jar` file using `mvn package`. Deploy the jar to a server (e.g., AWS EC2, Heroku) or containerize it using Docker (a `docker-compose.yml` is included in the project root for reference).
