@@ -21,4 +21,4 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: FRONTEND_URL
-        value: https://digital-banking-frontend.vercel.app # Note: Update this if the Vercel URL is different.
+        value: https://digital-banking-frontend.vercel.app 
