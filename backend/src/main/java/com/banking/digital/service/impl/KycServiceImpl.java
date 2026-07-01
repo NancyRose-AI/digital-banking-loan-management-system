@@ -103,7 +103,7 @@ public class KycServiceImpl implements KycService {
                 extractedText = tesseract.doOCR(ocrTargetFile);
                 System.out.println("[KYC OCR] Extracted text for " + documentType + ": " + extractedText);
             } catch (TesseractException e) {
-                System.err.println("[KYC OCR] Tesseract failed for file: " + filename + " — " + e.getMessage());
+                System.err.println("[KYC OCR] Tesseract failed for file: " + file.getOriginalFilename() + " — " + e.getMessage());
                 
             } finally {
                 
@@ -162,17 +162,17 @@ public class KycServiceImpl implements KycService {
                     .build();
 
             return kycDocumentRepository.save(doc);
-            } finally {
-                // Clean up temporary OCR file
-                if (ocrTargetFile != null && ocrTargetFile.exists()) {
-                    ocrTargetFile.delete();
-                }
-                if (tempPngFile != null && tempPngFile.exists()) {
-                    tempPngFile.delete();
-                }
-            }
+
         } catch (IOException e) {
             throw new RuntimeException("Could not store file: " + e.getMessage(), e);
+        } finally {
+            // Clean up temporary OCR file
+            if (ocrTargetFile != null && ocrTargetFile.exists()) {
+                ocrTargetFile.delete();
+            }
+            if (tempPngFile != null && tempPngFile.exists()) {
+                tempPngFile.delete();
+            }
         }
     }
 
