@@ -64,6 +64,8 @@ public class KycServiceImpl implements KycService {
             );
         }
 
+        File ocrTargetFile = null;
+        File tempPngFile = null;
         try {
             
             
@@ -72,12 +74,12 @@ public class KycServiceImpl implements KycService {
             String fileUrl = (String) uploadResult.get("secure_url");
 
             
-            File ocrTargetFile = File.createTempFile("kyc_ocr_", "_" + file.getOriginalFilename());
+            ocrTargetFile = File.createTempFile("kyc_ocr_", "_" + file.getOriginalFilename());
             Files.write(ocrTargetFile.toPath(), file.getBytes());
 
             
             
-            File tempPngFile = null;
+
             try {
                 BufferedImage bufferedImage = ImageIO.read(ocrTargetFile);
 
@@ -166,7 +168,7 @@ public class KycServiceImpl implements KycService {
         } catch (IOException e) {
             throw new RuntimeException("Could not store file: " + e.getMessage(), e);
         } finally {
-            // Clean up temporary OCR file
+            
             if (ocrTargetFile != null && ocrTargetFile.exists()) {
                 ocrTargetFile.delete();
             }
