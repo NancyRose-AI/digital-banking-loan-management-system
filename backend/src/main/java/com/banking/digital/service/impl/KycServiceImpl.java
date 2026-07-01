@@ -101,7 +101,13 @@ public class KycServiceImpl implements KycService {
             String extractedText = "";
             try {
                 Tesseract tesseract = new Tesseract();
-                tesseract.setDatapath("tessdata");
+                
+                String tessDataPath = System.getenv("TESSDATA_PREFIX");
+                if (tessDataPath == null || tessDataPath.isBlank()) {
+                    tessDataPath = "C:/Program Files/Tesseract-OCR/tessdata"; 
+                }
+                tesseract.setDatapath(tessDataPath);
+
                 extractedText = tesseract.doOCR(ocrTargetFile);
                 System.out.println("[KYC OCR] Extracted text for " + documentType + ": " + extractedText);
             } catch (TesseractException e) {
