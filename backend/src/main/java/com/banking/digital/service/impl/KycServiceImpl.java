@@ -66,17 +66,17 @@ public class KycServiceImpl implements KycService {
 
         try {
             
-            // Upload the file to Cloudinary
+            
             Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
                     ObjectUtils.asMap("folder", "kyc"));
             String fileUrl = (String) uploadResult.get("secure_url");
 
-            // Create a temporary local copy for OCR processing only
+            
             File ocrTargetFile = File.createTempFile("kyc_ocr_", "_" + file.getOriginalFilename());
             Files.write(ocrTargetFile.toPath(), file.getBytes());
 
             
-            // ocrTargetFile is already created above as a temporary file
+            
             File tempPngFile = null;
             try {
                 BufferedImage bufferedImage = ImageIO.read(ocrTargetFile);

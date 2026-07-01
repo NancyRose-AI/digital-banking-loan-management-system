@@ -10,8 +10,7 @@ public class CloudinaryConfig {
 
     @Bean
     public Cloudinary cloudinary(@Value("${CLOUDINARY_URL}") String cloudinaryUrl) {
-        // The CLOUDINARY_URL is of the form:
-        // cloudinary://<api_key>:<api_secret>@<cloud_name>
+        
         return new Cloudinary(cloudinaryUrl);
     }
 }
