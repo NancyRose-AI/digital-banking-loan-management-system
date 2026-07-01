@@ -25,6 +25,32 @@ const KycList = ({ refreshTrigger }) => {
     fetchDocuments();
   }, [user, refreshTrigger]);
 
+  // Re-upload handling: single hidden input and state
+  const [reuploadDoc, setReuploadDoc] = useState(null);
+  const reuploadInputRef = useRef(null);
+  const handleReuploadClick = (doc) => {
+    setReuploadDoc(doc);
+    if (reuploadInputRef.current) reuploadInputRef.current.click();
+  };
+  const handleReuploadFile = async (e) => {
+    if (!reuploadDoc) return;
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('userId', user.userId);
+    formData.append('file', file);
+    formData.append('documentType', reuploadDoc.documentType);
+    try {
+      await api.post('/kyc/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      // Refresh after successful re-upload
+      fetchDocuments();
+    } catch (error) {
+      console.error('Reupload failed', error);
+    } finally {
+      setReuploadDoc(null);
+    }
+  };
+
   if (loading) {
     return <Typography sx={{ p: 2 }} color="text.secondary">Loading verification history...</Typography>;
   }
@@ -49,25 +75,7 @@ const KycList = ({ refreshTrigger }) => {
               {documents.length > 0 ? (
                 documents.map((doc) => {
                   const fileName = doc.fileUrl ? doc.fileUrl.split('/').pop() : 'Unknown';
-                  const fileInputRef = useRef(null);
-                  const handleReuploadClick = () => {
-                    if (fileInputRef.current) fileInputRef.current.click();
-                  };
-                  const handleReuploadFile = async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const formData = new FormData();
-                    formData.append('userId', user.userId);
-                    formData.append('file', file);
-                    formData.append('documentType', doc.documentType);
-                    try {
-                      await api.post('/kyc/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
-                      // Refresh documents after successful re-upload
-                      fetchDocuments();
-                    } catch (error) {
-                      console.error('Reupload failed', error);
-                    }
-                  };
+
                   return (
                     <TableRow key={doc.id} hover>
                       <TableCell sx={{ fontWeight: 600 }}>{doc.documentType}</TableCell>
@@ -82,18 +90,9 @@ const KycList = ({ refreshTrigger }) => {
                           color={doc.status === 'VERIFIED' ? 'success' : doc.status === 'REJECTED' ? 'error' : 'warning'} 
                           sx={{ fontWeight: 'bold', fontSize: '0.65rem' }}
                         />
-                        {doc.status === 'REJECTED' && (
-                          <>
-                            <Button variant="outlined" size="small" onClick={handleReuploadClick}>Re-upload</Button>
-                            <input
-                              type="file"
-                              accept="image/*"
-                              style={{ display: 'none' }}
-                              ref={fileInputRef}
-                              onChange={handleReuploadFile}
-                            />
-                          </>
-                        )}
+                         {doc.status === 'REJECTED' && (
+                           <Button variant="outlined" size="small" onClick={() => handleReuploadClick(doc)}>Re-upload</Button>
+                         )}
                       </TableCell>
                     </TableRow>
                   );
@@ -109,6 +108,7 @@ const KycList = ({ refreshTrigger }) => {
           </Table>
         </TableContainer>
       </Paper>
+        <input type="file" accept="image/*" style={{ display: 'none' }} ref={reuploadInputRef} onChange={handleReuploadFile} />
     </Box>
   );
 };
