@@ -120,42 +120,48 @@ public class KycServiceImpl implements KycService {
                 }
             }
 
-            
-            String status = "PENDING";
+            String status = "REJECTED";
             String documentNumber = "N/A";
-            if (documentType != null && (documentType.equalsIgnoreCase("PAN") || documentType.equalsIgnoreCase("AADHAAR"))) {
-                
-                String cleaned = extractedText.replaceAll("[\\s\\-]", "").toUpperCase();
-                System.out.println("[KYC OCR] Cleaned text: " + cleaned);
 
-                if (documentType.equalsIgnoreCase("PAN")) {
-                    Pattern panPattern = Pattern.compile("[A-Z]{5}[0-9]{4}[A-Z]");
-                    Matcher m = panPattern.matcher(cleaned);
-                    if (m.find()) {
-                        documentNumber = m.group();
+            // Clean extracted text for pattern matching
+            String cleaned = extractedText.replaceAll("[\\s\\-]", "").toUpperCase();
+
+            // Try to detect document type and extract number
+            Pattern panPattern = Pattern.compile("[A-Z]{5}[0-9]{4}[A-Z]");
+            Matcher panMatcher = panPattern.matcher(cleaned);
+            if (panMatcher.find()) {
+                documentNumber = panMatcher.group();
+                documentType = "PAN";
+                status = "VERIFIED";
+                System.out.println("[KYC OCR] Detected PAN: " + documentNumber);
+            } else {
+                Pattern aadhaarPattern = Pattern.compile("\\d{12}");
+                Matcher aadhaarMatcher = aadhaarPattern.matcher(cleaned);
+                if (aadhaarMatcher.find()) {
+                    documentNumber = aadhaarMatcher.group();
+                    documentType = "AADHAAR";
+                    status = "VERIFIED";
+                    System.out.println("[KYC OCR] Detected Aadhaar: " + documentNumber);
+                } else {
+                    Pattern passportPattern = Pattern.compile("[A-Z][0-9]{7}");
+                    Matcher passportMatcher = passportPattern.matcher(cleaned);
+                    if (passportMatcher.find()) {
+                        documentNumber = passportMatcher.group();
+                        documentType = "PASSPORT";
                         status = "VERIFIED";
-                        System.out.println("[KYC OCR] PAN matched: " + documentNumber);
+                        System.out.println("[KYC OCR] Detected Passport: " + documentNumber);
                     } else {
-                        System.out.println("[KYC OCR] PAN pattern not found in cleaned text.");
-                    }
-                } else { 
-                    
-                    Pattern aadhaarPattern = Pattern.compile("\\d{12}");
-                    Matcher m = aadhaarPattern.matcher(cleaned);
-                    if (m.find()) {
-                        documentNumber = m.group();
-                        status = "VERIFIED";
-                        System.out.println("[KYC OCR] Aadhaar matched (cleaned): " + documentNumber);
-                    } else {
-                        
-                        Pattern aadhaarSpacedPattern = Pattern.compile("\\d{4}\\s+\\d{4}\\s+\\d{4}");
-                        Matcher m2 = aadhaarSpacedPattern.matcher(extractedText);
-                        if (m2.find()) {
-                            documentNumber = m2.group().replaceAll("\\s+", "");
+                        Pattern dlPattern = Pattern.compile("[A-Z]{2}[0-9]{2}[A-Z0-9]{11}");
+                        Matcher dlMatcher = dlPattern.matcher(cleaned);
+                        if (dlMatcher.find()) {
+                            documentNumber = dlMatcher.group();
+                            documentType = "DRIVING_LICENSE";
                             status = "VERIFIED";
-                            System.out.println("[KYC OCR] Aadhaar matched (spaced): " + documentNumber);
+                            System.out.println("[KYC OCR] Detected Driving Licence: " + documentNumber);
                         } else {
-                            System.out.println("[KYC OCR] Aadhaar pattern not found. Cleaned text was: " + cleaned);
+                            // No valid pattern found
+                            status = "REJECTED";
+                            System.out.println("[KYC OCR] No valid document patterns detected; rejecting.");
                         }
                     }
                 }

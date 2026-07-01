@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Chip } from '@mui/material';
+import React, { useState, useEffect, useRef } from 'react';
+import { Box, Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper, Chip, Button } from '@mui/material';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 
@@ -49,6 +49,25 @@ const KycList = ({ refreshTrigger }) => {
               {documents.length > 0 ? (
                 documents.map((doc) => {
                   const fileName = doc.fileUrl ? doc.fileUrl.split('/').pop() : 'Unknown';
+                  const fileInputRef = useRef(null);
+                  const handleReuploadClick = () => {
+                    if (fileInputRef.current) fileInputRef.current.click();
+                  };
+                  const handleReuploadFile = async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const formData = new FormData();
+                    formData.append('userId', user.userId);
+                    formData.append('file', file);
+                    formData.append('documentType', doc.documentType);
+                    try {
+                      await api.post('/kyc/upload', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+                      // Refresh documents after successful re-upload
+                      fetchDocuments();
+                    } catch (error) {
+                      console.error('Reupload failed', error);
+                    }
+                  };
                   return (
                     <TableRow key={doc.id} hover>
                       <TableCell sx={{ fontWeight: 600 }}>{doc.documentType}</TableCell>
@@ -56,13 +75,25 @@ const KycList = ({ refreshTrigger }) => {
                       <TableCell sx={{ color: 'text.secondary', fontSize: '0.825rem' }}>
                         {doc.uploadedAt ? new Date(doc.uploadedAt).toLocaleString('en-IN') : 'N/A'}
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Chip 
                           label={doc.status} 
                           size="small" 
                           color={doc.status === 'VERIFIED' ? 'success' : doc.status === 'REJECTED' ? 'error' : 'warning'} 
                           sx={{ fontWeight: 'bold', fontSize: '0.65rem' }}
                         />
+                        {doc.status === 'REJECTED' && (
+                          <>
+                            <Button variant="outlined" size="small" onClick={handleReuploadClick}>Re-upload</Button>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              style={{ display: 'none' }}
+                              ref={fileInputRef}
+                              onChange={handleReuploadFile}
+                            />
+                          </>
+                        )}
                       </TableCell>
                     </TableRow>
                   );
